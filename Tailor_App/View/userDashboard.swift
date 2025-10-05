@@ -11,41 +11,76 @@ import CoreData
 struct userDashboard: View {
     @Environment(\.managedObjectContext) private var viewcontext
     @StateObject var userVm : UserViewmodel
-    @State private var ownerName : String = ""
-    @State private var shopName : String = ""
-    @State private var phoneNumber : String = ""
+  
     init (context : NSManagedObjectContext) {
         _userVm = StateObject(wrappedValue: UserViewmodel(context: context))
     }
     var body: some View {
         NavigationStack {
-            
-            VStack {
-                TextField("enter name", text: $ownerName)
-                TextField("enter shopname", text: $shopName)
-                TextField("enter number", text: $phoneNumber)
-            }
-            .textFieldStyle(.roundedBorder)
-            Button("save") {
-                userVm.addUser(ownerName: ownerName, shopeName: shopName, phoneNumber: phoneNumber)
-            }
-            if !userVm.users.isEmpty {
-                VStack  {
-                    List {
-                        ForEach (userVm.users) { user in
-                            Text(user.ownerName)
-                            Text(user.shopName)
-                            Text(user.phoneNumber)
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [.blue.opacity(0.3), .purple.opacity(0.3)]),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ).ignoresSafeArea()
+                VStack {
+                    if !userVm.users.isEmpty {
+                        VStack  {
+                            ForEach (userVm.users) { user in
+                                HStack (spacing: 100) {
+                                    VStack {
+                                        Text(user.ownerName)
+                                            .font(.title)
+                                        Text(user.shopName)
+                                            .font(.headline)
+                                        Text(user.phoneNumber)
+                                            .font(.subheadline)
+                                    }
+                                    Button {
+                                        userVm.deleteUser(user)
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .foregroundStyle(Color.red)
+                                    }
+
+                                }
+                                
+                                    
+                            }
                         }
-                }
+                        .padding()
+                    }
+                    Spacer()
                   
                 }
-            } else {
-                
             }
-            
-            Spacer()
-            
+                .toolbar {
+                    if userVm.users.isEmpty {
+                        withAnimation {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                NavigationLink("Add Admin") {
+                                    AddAdmin(userVm: userVm)
+                                }
+                                .padding(.trailing, 5)
+                                .foregroundStyle(Color.white)
+                                .background(Color.blue)
+                                .clipShape(.buttonBorder)
+                                
+                            }
+                        }
+                      
+                    } else {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Text("Edit")
+                        }
+                        ToolbarItem(placement: .topBarLeading) {
+                            NavigationLink("Customers") {
+                                Customer()
+                            }
+                        }
+                    }
+                  
+                }
             .navigationTitle("Tailor Shop")
             .onAppear {
                 userVm.fetchUser()

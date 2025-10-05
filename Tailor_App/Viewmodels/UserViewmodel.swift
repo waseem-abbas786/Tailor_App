@@ -23,7 +23,7 @@ class UserViewmodel : ObservableObject {
     func fetchUser () {
         let requext : NSFetchRequest <UserEntity> = UserEntity.fetchRequest()
         do {
-           let entities = try context.fetch(requext)
+            let entities = try context.fetch(requext)
             users = entities.map{UserModel(entity: $0)}
             saveContext()
         } catch  {
@@ -37,4 +37,20 @@ class UserViewmodel : ObservableObject {
             
         }
     }
+    func deleteUser(_ user: UserModel) {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", user.id as CVarArg)
+        
+        do {
+            let entities = try context.fetch(request)
+            if let entity = entities.first {
+                context.delete(entity)
+                saveContext()
+                fetchUser()
+            }
+        } catch {
+            print("❌ Failed to delete user: \(error)")
+        }
+    }
+
 }
