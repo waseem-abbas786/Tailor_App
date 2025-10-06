@@ -6,6 +6,7 @@
 //
 import CoreData
 import Foundation
+import UIKit
 class UserViewmodel : ObservableObject {
     @Published var users : [UserModel] = []
     private let context : NSManagedObjectContext
@@ -13,8 +14,12 @@ class UserViewmodel : ObservableObject {
         self.context = context
     }
     
-    func addUser (ownerName : String, shopeName : String, phoneNumber : String) {
-        let model = UserModel(ownerName: ownerName, shopName: shopeName, phoneNumber: phoneNumber)
+    func addUser (ownerName : String, shopeName : String, phoneNumber : String, image : UIImage?) {
+        var imageName: String? = nil
+           if let validImage = image {
+               imageName = ImageManager.shared.saveImage(validImage)
+           }
+        let model = UserModel(ownerName: ownerName, shopName: shopeName, phoneNumber: phoneNumber, photoPath: imageName)
         let entity = UserEntity(context: context)
         entity.update(from: model, to: context)
         fetchUser()

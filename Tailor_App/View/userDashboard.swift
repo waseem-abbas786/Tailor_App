@@ -16,77 +16,137 @@ struct userDashboard: View {
         _userVm = StateObject(wrappedValue: UserViewmodel(context: context))
     }
     var body: some View {
-        NavigationStack {
-            ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [.blue.opacity(0.3), .purple.opacity(0.3)]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ).ignoresSafeArea()
-                VStack {
-                    if !userVm.users.isEmpty {
-                        VStack  {
-                            ForEach (userVm.users) { user in
-                                HStack (spacing: 100) {
-                                    VStack {
-                                        Text(user.ownerName)
-                                            .font(.title)
-                                        Text(user.shopName)
-                                            .font(.headline)
-                                        Text(user.phoneNumber)
-                                            .font(.subheadline)
+            NavigationStack {
+                ZStack {
+                    LinearGradient(
+                        gradient: Gradient(colors: [.blue.opacity(0.3), .purple.opacity(0.3)]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                    .ignoresSafeArea()
+                    
+                    VStack {
+                        if userVm.users.isEmpty {
+                            emptyStateView
+                        } else {
+                            ScrollView {
+                                VStack(spacing: 15) {
+                                    ForEach(userVm.users) { user in
+                                        userCard(for: user)
                                     }
-                                    Button {
-                                        userVm.deleteUser(user)
-                                    } label: {
-                                        Image(systemName: "trash")
-                                            .foregroundStyle(Color.red)
-                                    }
-
                                 }
-                                
-                                    
+                                .padding()
                             }
                         }
-                        .padding()
                     }
-                    Spacer()
-                  
                 }
-            }
                 .toolbar {
-                    if userVm.users.isEmpty {
-                        withAnimation {
-                            ToolbarItem(placement: .topBarTrailing) {
-                                NavigationLink("Add Admin") {
-                                    AddAdmin(userVm: userVm)
-                                }
-                                .padding(.trailing, 5)
-                                .foregroundStyle(Color.white)
-                                .background(Color.blue)
-                                .clipShape(.buttonBorder)
-                                
-                            }
-                        }
-                      
-                    } else {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Text("Edit")
-                        }
-                        ToolbarItem(placement: .topBarLeading) {
+                    ToolbarItem(placement: .topBarLeading) {
+                        if !userVm.users.isEmpty {
                             NavigationLink("Customers") {
                                 Customer()
                             }
                         }
                     }
-                  
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        if userVm.users.isEmpty {
+                            NavigationLink("Add Admin") {
+                                AddAdmin(userVm: userVm)
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.blue)
+                        } else {
+                            NavigationLink("Edit") {
+                                AddAdmin(userVm: userVm)
+                            }
+                        }
+                    }
                 }
-            .navigationTitle("Tailor Shop")
-            .onAppear {
-                userVm.fetchUser()
+                .navigationTitle("Tailor Shop")
+                .onAppear {
+                    userVm.fetchUser()
+                }
             }
         }
-    }
+        
+        // MARK: - Subviews
+        
+        private var emptyStateView: some View {
+            VStack(spacing: 15) {
+                Image(systemName: "person.crop.circle.badge.plus")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .foregroundStyle(.blue)
+                
+                Text("No Admin Found")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                
+                NavigationLink {
+                    AddAdmin(userVm: userVm)
+                } label: {
+                    Text("Add Admin")
+                        .font(.headline)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal)
+                }
+            }
+            .transition(.opacity.combined(with: .scale))
+        }
+        
+        private func userCard(for user: UserModel) -> some View {
+            HStack(spacing: 16) {
+                if let imageName = user.photoPath,
+                   let uiImage = ImageManager.shared.loadImage(imageName) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 70, height: 70)
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
+                } else {
+                    Image(systemName: "person.circle")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 70, height: 70)
+                        .foregroundStyle(.gray)
+                }
+                
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(user.ownerName)
+                        .font(.title3)
+                        .bold()
+                    Text(user.shopName)
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                    Text(user.phoneNumber)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                Button {
+                    withAnimation {
+                        userVm.deleteUser(user)
+                    }
+                } label: {
+                    Image(systemName: "trash")
+                        .foregroundStyle(.red)
+                        .font(.title3)
+                }
+            }
+            .padding()
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 15))
+            .shadow(radius: 3)
+        }
 }
 
 #Preview {
