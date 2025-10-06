@@ -44,7 +44,7 @@ struct userDashboard: View {
                     ToolbarItem(placement: .topBarLeading) {
                         if !userVm.users.isEmpty {
                             NavigationLink("Customers") {
-                                Customer()
+                                Customer(context: viewcontext)
                             }
                         }
                     }
