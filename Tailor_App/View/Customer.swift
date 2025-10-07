@@ -38,7 +38,12 @@ struct Customer: View {
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                 AddCustomer(customerVm: customerVm)
+                NavigationLink {
+                    AddCustomer(customerVm: customerVm)
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title2)
+                }
             }
         }
         .navigationTitle("Customers")
@@ -73,50 +78,56 @@ struct Customer: View {
         .transition(.opacity.combined(with: .scale))
     }
     private func customerCard(for customer : CustomerModel) -> some View {
-        HStack {
-            if let imageName = customer.photoPath,
-               let uiImage = ImageManager.shared.loadImage(imageName) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 70, height: 70)
-                    .clipShape(Circle())
-                    .shadow(radius: 5)
-            } else {
-                Image(systemName: "person.circle")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 70, height: 70)
-                    .foregroundStyle(.gray)
-            }
-            
-            VStack {
-                Text(customer.name)
-                    .font(.title3)
-                    .bold()
-                Text(customer.phoneNumber)
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-                Text(customer.orderDescription)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("Dilivery Date: \(customer.deliveryDate.formatted(date: .long, time: .omitted))")
-            }
-            Spacer()
-            Button {
-                withAnimation {
-                    customerVm.deleteCustomer(customer)
-                }
-            } label: {
-                Image(systemName: "trash")
-                    .foregroundStyle(.red)
-                    .font(.title3)
-            }
+        NavigationLink {
+            MeasurementView(customer: customer)
+        } label: {
+            HStack {
+               if let imageName = customer.photoPath,
+                  let uiImage = ImageManager.shared.loadImage(imageName) {
+                   Image(uiImage: uiImage)
+                       .resizable()
+                       .scaledToFill()
+                       .frame(width: 70, height: 70)
+                       .clipShape(Circle())
+                       .shadow(radius: 5)
+               } else {
+                   Image(systemName: "person.circle")
+                       .resizable()
+                       .scaledToFit()
+                       .frame(width: 70, height: 70)
+                       .foregroundStyle(.gray)
+               }
+               
+               VStack {
+                   Text(customer.name)
+                       .font(.title3)
+                       .bold()
+                   Text(customer.phoneNumber)
+                       .font(.headline)
+                       .foregroundStyle(.secondary)
+                   Text(customer.orderDescription)
+                       .font(.caption)
+                       .foregroundStyle(.secondary)
+                   Text("D Date: \(customer.deliveryDate.formatted(date: .abbreviated, time: .omitted))")
+               }
+               Spacer()
+               Button {
+                   withAnimation {
+                       customerVm.deleteCustomer(customer)
+                   }
+               } label: {
+                   Image(systemName: "trash")
+                       .foregroundStyle(.red)
+                       .font(.title3)
+               }
+           }
+           .padding()
+           .background(.ultraThinMaterial)
+           .clipShape(RoundedRectangle(cornerRadius: 15))
+           .shadow(radius: 3)
         }
-        .padding()
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 15))
-        .shadow(radius: 3)
+
+
     }
 }
 

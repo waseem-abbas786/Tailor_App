@@ -31,7 +31,7 @@ extension CustomerModel {
         self.id = entity.id ?? UUID()
         self.name = entity.name ?? ""
         self.phoneNumber = entity.phoneNumber ?? ""
-        self.orderDescription = entity.description ?? ""
+        self.orderDescription = entity.description 
         self.deliveryDate = entity.deliveryDate ?? .now
         self.isCompleted = entity.isCompleted
         self.photoPath = entity.photoPath

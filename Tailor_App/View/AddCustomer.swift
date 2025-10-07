@@ -72,7 +72,7 @@ struct AddCustomer: View {
                 .padding()
                 
             }
-            .navigationTitle("Add Customer Inf...")
+            .navigationTitle("Add Customer")
             .onChange(of: photoItem) { _ , newItem in
                 if let newItem {
                     Task {

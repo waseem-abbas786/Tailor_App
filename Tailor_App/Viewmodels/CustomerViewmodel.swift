@@ -28,13 +28,21 @@ class CustomerViewmodel : ObservableObject {
         saveContext()
     }
     func fetchCustomer () {
-        let request : NSFetchRequest <CustomerEntity> = CustomerEntity.fetchRequest()
+        let request = NSFetchRequest<CustomerEntity>(entityName: "CustomerEntity")
         do {
-           let entities =  try context.fetch(request)
-            customers = entities.map{CustomerModel(entity: $0)}
-            saveContext()
-        } catch  {
-            
+            let fetched = try context.fetch(request)
+            customers = fetched.map { entity in
+                CustomerModel(
+                    id: entity.id ?? UUID(),
+                    name: entity.name ?? "",
+                    phoneNumber: entity.phoneNumber ?? "",
+                    orderDescription: entity.orderDescription ?? "",
+                    deliveryDate: entity.deliveryDate ?? .now,
+                    photoPath: entity.photoPath
+                )
+            }
+        } catch {
+            print("Error fetching customers: \(error)")
         }
     }
     func saveContext () {
