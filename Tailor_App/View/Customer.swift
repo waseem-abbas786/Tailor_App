@@ -111,15 +111,26 @@ struct Customer: View {
                    Text("D Date: \(customer.deliveryDate.formatted(date: .abbreviated, time: .omitted))")
                }
                Spacer()
-               Button {
-                   withAnimation {
-                       customerVm.deleteCustomer(customer)
-                   }
-               } label: {
-                   Image(systemName: "trash")
-                       .foregroundStyle(.red)
-                       .font(.title3)
-               }
+                VStack(spacing: 40) {
+                    Button {
+                        withAnimation {
+                            customerVm.deleteCustomer(customer)
+                        }
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(.red)
+                            .font(.title3)
+                    }
+                     NavigationLink {
+                         EditCustomerView(customerVm: customerVm, customer: customer)
+                     } label: {
+                         Image(systemName: "pencil")
+                     }
+                     .foregroundStyle(.black)
+                     .transition(.opacity.combined(with: .scale))
+                }
+          
+
            }
            .padding()
            .background(.ultraThinMaterial)

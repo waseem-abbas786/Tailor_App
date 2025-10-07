@@ -55,8 +55,7 @@ struct AddCustomer: View {
                             .modernTextFieldStyle()
                         TextField("Enter Description...", text: $orderDescription)
                             .modernTextFieldStyle()
-                        DatePicker("Deliverydate", selection: $deliveryDate)
-                            .datePickerStyle(.automatic)
+                        DatePicker("Delivery Date", selection: $deliveryDate, displayedComponents: .date)
                             .font(.headline)
                             .padding()
                         Button("Save") {

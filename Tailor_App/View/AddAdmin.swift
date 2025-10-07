@@ -16,7 +16,6 @@ struct AddAdmin: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background gradient
                 LinearGradient(
                     gradient: Gradient(colors: [.blue.opacity(0.3), .purple.opacity(0.3)]),
                     startPoint: .topLeading,

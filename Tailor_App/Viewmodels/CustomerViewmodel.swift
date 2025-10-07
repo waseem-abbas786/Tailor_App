@@ -66,5 +66,22 @@ class CustomerViewmodel : ObservableObject {
             
         }
     }
+    func editCustomer (_ customer : CustomerModel,name: String, phoneNumber : String, orderDescription : String, deliveryDate : Date) {
+        let reuest : NSFetchRequest <CustomerEntity> = CustomerEntity.fetchRequest()
+        reuest.predicate = NSPredicate(format: "id == %@", customer.id as CVarArg)
+        do {
+          let entities =  try context.fetch(reuest)
+            if let entity = entities.first {
+                entity.name = name
+                entity.phoneNumber = phoneNumber
+                entity.orderDescription = orderDescription
+                entity.deliveryDate =  deliveryDate
+                saveContext()
+                fetchCustomer()
+            }
+        } catch  {
+            
+        }
+    }
     
 }
