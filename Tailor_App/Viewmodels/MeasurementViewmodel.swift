@@ -81,7 +81,7 @@ class MeasurementViewmodel: ObservableObject {
         customerId: UUID
     ) {
         let request: NSFetchRequest<MeasurementEntity> = MeasurementEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", model.id as CVarArg)
+        request.predicate = NSPredicate(format: "id == %@ AND customerId == %@", model.id as CVarArg, customerId as CVarArg)
 
         do {
             let entities = try context.fetch(request)
