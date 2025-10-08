@@ -79,7 +79,7 @@ struct Customer: View {
     }
     private func customerCard(for customer : CustomerModel) -> some View {
         NavigationLink {
-            MeasurementView(customer: customer)
+            MeasurementView(context: viewContext, customer: customer)
         } label: {
             HStack {
                if let imageName = customer.photoPath,

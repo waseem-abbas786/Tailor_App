@@ -11,6 +11,7 @@
     </entity>
     <entity name="MeasurementEntity" representedClassName="MeasurementEntity" syncable="YES" codeGenerationType="class">
         <attribute name="chest" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="customerId" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="hips" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="lenght" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>

@@ -8,6 +8,9 @@
 import Foundation
 import CoreData
 
+import Foundation
+import CoreData
+
 struct MeasurementModel: Identifiable {
     let id: UUID
     var chest: Double
@@ -17,7 +20,19 @@ struct MeasurementModel: Identifiable {
     var length: Double
     var shoulder: Double
     var notes: String?
-    init(id: UUID = UUID(), chest: Double = 0.0, waist: Double = 0.0, hips: Double = 0.0, sleeves: Double = 0.0, length: Double = 0.0, shoulder: Double = 0.0, notes: String? = nil) {
+    var customerId: UUID  // ✅ link to customer
+    
+    init(
+        id: UUID = UUID(),
+        chest: Double = 0.0,
+        waist: Double = 0.0,
+        hips: Double = 0.0,
+        sleeves: Double = 0.0,
+        length: Double = 0.0,
+        shoulder: Double = 0.0,
+        notes: String? = nil,
+        customerId: UUID
+    ) {
         self.id = id
         self.chest = chest
         self.waist = waist
@@ -26,10 +41,12 @@ struct MeasurementModel: Identifiable {
         self.length = length
         self.shoulder = shoulder
         self.notes = notes
+        self.customerId = customerId
     }
 }
+
 extension MeasurementModel {
-    init (entity: MeasurementEntity) {
+    init(entity: MeasurementEntity) {
         self.id = entity.id ?? UUID()
         self.chest = entity.chest
         self.waist = entity.waist
@@ -38,10 +55,12 @@ extension MeasurementModel {
         self.length = entity.lenght
         self.shoulder = entity.shoulder
         self.notes = entity.notes
+        self.customerId = entity.customerId ?? UUID() // ✅
     }
 }
+
 extension MeasurementEntity {
-    func updateMeasurement (from model: MeasurementModel, to context : NSManagedObjectContext) {
+    func updateMeasurement(from model: MeasurementModel, to context: NSManagedObjectContext) {
         self.id = model.id
         self.chest = model.chest
         self.waist = model.waist
@@ -50,5 +69,6 @@ extension MeasurementEntity {
         self.lenght = model.length
         self.shoulder = model.shoulder
         self.notes = model.notes
+        self.customerId = model.customerId // ✅
     }
 }
