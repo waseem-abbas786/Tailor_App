@@ -50,12 +50,22 @@ struct MeasurementView: View {
                                         }
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
-                                        Button("delete") {
-                                            measurementVm.deleteMeasurement(measurement, for: customer.id)
+                                        HStack {
+                                            Button("Delete🚮") {
+                                                measurementVm.deleteMeasurement(measurement, for: customer.id)
+                                            }
+                                            .transition(.opacity.combined(with: .scale))
+                                            Spacer()
+                                            NavigationLink("Edit✍️") {
+                                                withAnimation {
+                                                    EditMeasurements(measurementVm: measurementVm, measurement: measurement)
+                                                }
+                                           }
+                                            
+                                            .transition(.opacity.combined(with: .scale))
                                         }
-                                        .transition(.opacity.combined(with: .scale))
-                                        .modernButtonStyle()
-                                    }
+                                        .padding()
+                                   }
                                     .padding()
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .background(.ultraThinMaterial)
