@@ -45,28 +45,28 @@ class MeasurementViewmodel: ObservableObject {
 
         do {
             let entities = try context.fetch(request)
-            self.measurements = entities.map { MeasurementModel(entity: $0) }
+              self.measurements = entities.map { MeasurementModel(entity: $0) }
         } catch {
             print("❌ Fetch error: \(error.localizedDescription)")
         }
     }
 
     // MARK: - Delete
-    func deleteMeasurement(_ measurement: MeasurementModel, customerId: UUID) {
-        let request: NSFetchRequest<MeasurementEntity> = MeasurementEntity.fetchRequest()
-        request.predicate = NSPredicate(format: "id == %@", measurement.id as CVarArg)
+    func deleteMeasurement(_ measurement: MeasurementModel, for customerId: UUID) {
+        let request = NSFetchRequest<MeasurementEntity>(entityName: "MeasurementEntity")
+        request.predicate = NSPredicate(format: "id == %@ AND customerId == %@", measurement.id as CVarArg, customerId as CVarArg)
 
         do {
-            let entities = try context.fetch(request)
-            if let entity = entities.first {
+            if let entity = try context.fetch(request).first {
                 context.delete(entity)
                 saveContext()
                 fetchMeasurements(for: customerId)
             }
         } catch {
-            print("❌ Delete error: \(error.localizedDescription)")
+            print("Failed to delete measurement: \(error.localizedDescription)")
         }
     }
+
 
     // MARK: - Update
     func updateMeasurements(

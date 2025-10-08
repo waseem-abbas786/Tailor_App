@@ -21,7 +21,6 @@ struct MeasurementView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background gradient
                 LinearGradient(
                     gradient: Gradient(colors: [.blue.opacity(0.3), .purple.opacity(0.3)]),
                     startPoint: .topLeading,
@@ -29,62 +28,33 @@ struct MeasurementView: View {
                 )
                 .ignoresSafeArea()
                 
-                VStack(spacing: 20) {
+                VStack {
                     if measurementVm.measurements.isEmpty {
                         emptyStateView
                     } else {
                         ScrollView {
-                            VStack(spacing: 15) {
+                            LazyVStack(spacing: 15) {
                                 ForEach(measurementVm.measurements) { measurement in
                                     VStack(alignment: .leading, spacing: 8) {
-                                        HStack {
-                                            Text("📏 Measurement Details")
-                                                .font(.headline)
-                                            Spacer()
-                                        }
+                                        Text("📏 Measurement Details")
+                                            .font(.headline)
                                         Divider()
                                         
                                         Group {
-                                            HStack {
-                                                Text("Chest:")
-                                                Spacer()
-                                                Text("\(measurement.chest, specifier: "%.2f")")
-                                            }
-                                            HStack {
-                                                Text("Waist:")
-                                                Spacer()
-                                                Text("\(measurement.waist, specifier: "%.2f")")
-                                            }
-                                            HStack {
-                                                Text("Hips:")
-                                                Spacer()
-                                                Text("\(measurement.hips, specifier: "%.2f")")
-                                            }
-                                            HStack {
-                                                Text("Sleeves:")
-                                                Spacer()
-                                                Text("\(measurement.sleeves, specifier: "%.2f")")
-                                            }
-                                            HStack {
-                                                Text("Length:")
-                                                Spacer()
-                                                Text("\(measurement.length, specifier: "%.2f")")
-                                            }
-                                            HStack {
-                                                Text("Shoulder:")
-                                                Spacer()
-                                                Text("\(measurement.shoulder, specifier: "%.2f")")
-                                            }
+                                            measurementRow(label: "Chest", value: measurement.chest)
+                                            measurementRow(label: "Waist", value: measurement.waist)
+                                            measurementRow(label: "Hips", value: measurement.hips)
+                                            measurementRow(label: "Sleeves", value: measurement.sleeves)
+                                            measurementRow(label: "Length", value: measurement.length)
+                                            measurementRow(label: "Shoulder", value: measurement.shoulder)
                                         }
                                         .font(.subheadline)
                                         .foregroundStyle(.secondary)
-                                        
-                                        if let notes = measurement.notes, !notes.isEmpty {
-                                            Text("📝 Notes: \(notes)")
-                                                .font(.footnote)
-                                                .foregroundStyle(.secondary)
-                                                .padding(.top, 6)
+                                        Button("delete") {
+                                            measurementVm.deleteMeasurement(measurement, for: customer.id)
                                         }
+                                        .transition(.opacity.combined(with: .scale))
+                                        .modernButtonStyle()
                                     }
                                     .padding()
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -98,13 +68,12 @@ struct MeasurementView: View {
                         }
                     }
                 }
-                .padding(.horizontal)
             }
             .navigationTitle("\(customer.name) 📐")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
-                        AddMeasurement(measuremntVm: measurementVm)
+                        AddMeasurement(measuremntVm: measurementVm, customerId: customer.id)
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
@@ -118,22 +87,29 @@ struct MeasurementView: View {
         }
     }
     
-    // MARK: - Empty State
-    var emptyStateView: some View {
+    // MARK: - Helpers
+    private func measurementRow(label: String, value: Double) -> some View {
+        HStack {
+            Text("\(label):")
+            Spacer()
+            Text("\(value, specifier: "%.2f")")
+        }
+    }
+    
+    private var emptyStateView: some View {
         VStack(spacing: 20) {
             Image(systemName: "ruler")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
                 .foregroundStyle(.blue)
-                .shadow(radius: 3)
             
             Text("No Measurements Yet")
                 .font(.headline)
                 .foregroundStyle(.secondary)
             
             NavigationLink {
-                AddMeasurement(measuremntVm: measurementVm)
+                AddMeasurement(measuremntVm: measurementVm, customerId: customer.id)
             } label: {
                 Text("Add Measurement")
                     .font(.headline)

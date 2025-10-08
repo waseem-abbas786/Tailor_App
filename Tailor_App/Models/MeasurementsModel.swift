@@ -20,7 +20,7 @@ struct MeasurementModel: Identifiable {
     var length: Double
     var shoulder: Double
     var notes: String?
-    var customerId: UUID  // ✅ link to customer
+    var customerId: UUID 
     
     init(
         id: UUID = UUID(),
@@ -55,7 +55,7 @@ extension MeasurementModel {
         self.length = entity.lenght
         self.shoulder = entity.shoulder
         self.notes = entity.notes
-        self.customerId = entity.customerId ?? UUID() // ✅
+        self.customerId = entity.customerId ?? UUID()
     }
 }
 
@@ -69,6 +69,6 @@ extension MeasurementEntity {
         self.lenght = model.length
         self.shoulder = model.shoulder
         self.notes = model.notes
-        self.customerId = model.customerId // ✅
+        self.customerId = model.customerId
     }
 }
