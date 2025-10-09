@@ -134,24 +134,27 @@ struct userDashboard: View {
                 Spacer()
                 VStack (spacing: 40) {
                     NavigationLink {
-                        EditAdminView(userVm: userVm, user: user)
-                    } label: {
-                        Text("🖋️")
-                    }
-
-
-                    Button {
                         withAnimation {
-                            userVm.deleteUser(user)
+                            EditAdminView(userVm: userVm, user: user)
                         }
-                    } label: {
-                        Image(systemName: "trash")
-                            .foregroundStyle(.red)
-                            .font(.title3)
+                     } label: {
+                        Image(systemName: "pencil")
                     }
+                     .transition(.opacity.combined(with: .scale))
+
+//                    Button {
+//                        withAnimation {
+//                            userVm.deleteUser(user)
+//                        }
+//                    } label: {
+//                        Image(systemName: "trash")
+//                            .foregroundStyle(.red)
+//                            .font(.title3)
+//                    }
                 }
 
             }
+            .transition(.opacity.combined(with: .scale))
             .padding()
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 15))

@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct ModernButtonModifier: ViewModifier {
     var color: Color = .blue
     var cornerRadius: CGFloat = 12
