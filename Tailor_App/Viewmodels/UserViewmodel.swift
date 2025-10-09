@@ -57,5 +57,26 @@ class UserViewmodel : ObservableObject {
             print("❌ Failed to delete user: \(error)")
         }
     }
-
+    
+    func updateUser (_ user : UserModel, ownerName : String, shopeName : String, phoneNumber : String, image : UIImage?) {
+        var imageName: String? = nil
+           if let validImage = image {
+               imageName = ImageManager.shared.saveImage(validImage)
+           }
+        let request : NSFetchRequest <UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", user.id as CVarArg)
+        do {
+          let entities =  try context.fetch(request)
+            if let entity = entities.first {
+                entity.ownerName = ownerName
+                entity.phoneNumber = phoneNumber
+                entity.shopName = shopeName
+                entity.photoPath = imageName
+                saveContext()
+                fetchUser()
+            }
+        } catch  {
+            
+        }
+    }
 }

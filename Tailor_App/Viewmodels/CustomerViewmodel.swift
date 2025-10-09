@@ -83,5 +83,8 @@ class CustomerViewmodel : ObservableObject {
             
         }
     }
+    var totalCustomers : Int {
+        customers.count
+    }
     
 }

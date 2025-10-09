@@ -11,9 +11,11 @@ import CoreData
 struct userDashboard: View {
     @Environment(\.managedObjectContext) private var viewcontext
     @StateObject var userVm : UserViewmodel
+    @StateObject var customerVm : CustomerViewmodel
   
     init (context : NSManagedObjectContext) {
         _userVm = StateObject(wrappedValue: UserViewmodel(context: context))
+        _customerVm = StateObject(wrappedValue: CustomerViewmodel(context: context))
     }
     var body: some View {
             NavigationStack {
@@ -32,11 +34,12 @@ struct userDashboard: View {
                             ScrollView {
                                 VStack(spacing: 15) {
                                     ForEach(userVm.users) { user in
-                                        userCard(for: user)
+                                        userCard(for: user, userVm: userVm)
                                     }
                                 }
                                 .padding()
                             }
+                            customerCount(customerVm: customerVm)
                         }
                     }
                 }
@@ -57,19 +60,17 @@ struct userDashboard: View {
                             .buttonStyle(.borderedProminent)
                             .tint(.blue)
                         } else {
-                            NavigationLink("Edit") {
-                                AddAdmin(userVm: userVm)
-                            }
+                           
                         }
                     }
                 }
                 .navigationTitle("Tailor Shop")
                 .onAppear {
                     userVm.fetchUser()
+                    customerVm.fetchCustomer()
                 }
             }
         }
-        
         // MARK: - Subviews
         
         private var emptyStateView: some View {
@@ -100,7 +101,7 @@ struct userDashboard: View {
             .transition(.opacity.combined(with: .scale))
         }
         
-        private func userCard(for user: UserModel) -> some View {
+    private func userCard(for user: UserModel, userVm : UserViewmodel) -> some View {
             HStack(spacing: 16) {
                 if let imageName = user.photoPath,
                    let uiImage = ImageManager.shared.loadImage(imageName) {
@@ -131,22 +132,45 @@ struct userDashboard: View {
                 }
                 
                 Spacer()
-                
-                Button {
-                    withAnimation {
-                        userVm.deleteUser(user)
+                VStack (spacing: 40) {
+                    NavigationLink {
+                        EditAdminView(userVm: userVm, user: user)
+                    } label: {
+                        Text("🖋️")
                     }
-                } label: {
-                    Image(systemName: "trash")
-                        .foregroundStyle(.red)
-                        .font(.title3)
+
+
+                    Button {
+                        withAnimation {
+                            userVm.deleteUser(user)
+                        }
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(.red)
+                            .font(.title3)
+                    }
                 }
+
             }
             .padding()
             .background(.ultraThinMaterial)
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .shadow(radius: 3)
         }
+    private func customerCount (customerVm : CustomerViewmodel) -> some View {
+        HStack {
+                Text("Total Customers: \(customerVm.totalCustomers)")
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                    .padding(.vertical, 8)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 50)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(radius: 3)
+            .padding(.horizontal)
+    }
 }
 
 #Preview {
